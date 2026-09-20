@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>RGB Image AI</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="rgb-bg"></div>
+
+    <main class="card">
+
+        <div class="brand">
+            ✦ IMAGE AI
+        </div>
+
+        <h1>Create an Image</h1>
+
+        <p class="subtitle">
+            Describe your idea and let AI create it.
+        </p>
+
+        <textarea
+            id="prompt"
+            placeholder="Describe the image you want..."
+            maxlength="2000"
+        ></textarea>
+
+        <button id="generateBtn">
+            ✦ Create Image
+        </button>
+
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Creating your image...</p>
+        </div>
+
+        <div id="error" class="error"></div>
+
+        <div id="result" class="result hidden">
+            <img id="generatedImage" alt="Generated image">
+
+            <a
+                id="downloadBtn"
+                class="download"
+                download="AI-generated-image.png"
+            >
+                ↓ Download Image
+            </a>
+        </div>
+
+    </main>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
