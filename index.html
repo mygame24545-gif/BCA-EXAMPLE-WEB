@@ -1,62 +1,344 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find My Location</title>
 
-    <title>RGB Image AI</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-    <link rel="stylesheet" href="style.css">
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      color: white;
+      background: #080b18;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      width: 350px;
+      height: 350px;
+      background: #6c35ff;
+      filter: blur(140px);
+      opacity: 0.4;
+      top: -100px;
+      left: -100px;
+      z-index: -1;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      width: 300px;
+      height: 300px;
+      background: #00d9ff;
+      filter: blur(140px);
+      opacity: 0.3;
+      bottom: -100px;
+      right: -80px;
+      z-index: -1;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 450px;
+      text-align: center;
+      padding: 35px 24px;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 25px;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(15px);
+      box-shadow: 0 0 40px rgba(0,217,255,0.08);
+      animation: appear 0.8s ease;
+    }
+
+    @keyframes appear {
+      from {
+        opacity: 0;
+        transform: translateY(25px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .icon {
+      font-size: 65px;
+      margin-bottom: 15px;
+      display: inline-block;
+      animation: float 2s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+    }
+
+    h1 span {
+      color: #00e5ff;
+    }
+
+    .description {
+      color: #b8c2d9;
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+
+    #findBtn {
+      position: relative;
+      width: 100%;
+      padding: 17px 12px;
+      border: none;
+      border-radius: 12px;
+      color: #06101b;
+      background: linear-gradient(100deg, #00e5ff, #8b5cff);
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(0,229,255,0.25);
+      transition: transform 0.2s, box-shadow 0.2s;
+      overflow: hidden;
+    }
+
+    #findBtn:hover {
+      box-shadow: 0 0 32px rgba(0,229,255,0.55);
+      transform: translateY(-2px);
+    }
+
+    #findBtn:active {
+      transform: scale(0.95);
+    }
+
+    #findBtn:disabled {
+      cursor: wait;
+      opacity: 0.75;
+    }
+
+    #status {
+      min-height: 42px;
+      margin: 20px 0;
+      color: #b8c2d9;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .loader {
+      width: 25px;
+      height: 25px;
+      border: 3px solid rgba(255,255,255,0.2);
+      border-top-color: #00e5ff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 12px auto;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .result {
+      display: none;
+      margin-top: 10px;
+      padding: 18px;
+      border-radius: 15px;
+      text-align: left;
+      background: rgba(0,0,0,0.25);
+      border: 1px solid rgba(0,229,255,0.25);
+      animation: appear 0.5s ease;
+    }
+
+    .result h2 {
+      color: #00e5ff;
+      font-size: 18px;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+
+    .info {
+      margin: 14px 0;
+      overflow-wrap: anywhere;
+    }
+
+    .label {
+      display: block;
+      color: #9daac4;
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+
+    .value {
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .map-link {
+      display: block;
+      margin-top: 20px;
+      padding: 13px;
+      text-align: center;
+      color: #06101b;
+      font-weight: bold;
+      text-decoration: none;
+      border-radius: 10px;
+      background: #00e5ff;
+      transition: 0.2s;
+    }
+
+    .map-link:hover {
+      background: #80f2ff;
+      transform: scale(1.02);
+    }
+
+    .footer {
+      margin-top: 25px;
+      font-size: 11px;
+      color: #8290aa;
+      line-height: 1.6;
+    }
+  </style>
 </head>
 
 <body>
+  <main class="container">
+    <div class="icon">📍</div>
 
-    <div class="rgb-bg"></div>
+    <h1>MY <span>LOCATION</span></h1>
 
-    <main class="card">
+    <p class="description">
+      Discover your current location with one click.
+      Allow location access when your browser asks.
+    </p>
 
-        <div class="brand">
-            ✦ IMAGE AI
-        </div>
+    <button id="findBtn" onclick="findLocation()">
+      📍 FIND MY LOCATION
+    </button>
 
-        <h1>Create an Image</h1>
+    <div id="status" role="status" aria-live="polite">
+      Ready to find your location.
+    </div>
 
-        <p class="subtitle">
-            Describe your idea and let AI create it.
-        </p>
+    <section class="result" id="result">
+      <h2>✓ Location Found!</h2>
 
-        <textarea
-            id="prompt"
-            placeholder="Describe the image you want..."
-            maxlength="2000"
-        ></textarea>
+      <div class="info">
+        <span class="label">Latitude</span>
+        <span class="value" id="latitude"></span>
+      </div>
 
-        <button id="generateBtn">
-            ✦ Create Image
-        </button>
+      <div class="info">
+        <span class="label">Longitude</span>
+        <span class="value" id="longitude"></span>
+      </div>
 
-        <div id="loading" class="loading hidden">
-            <div class="spinner"></div>
-            <p>Creating your image...</p>
-        </div>
+      <div class="info">
+        <span class="label">Accuracy</span>
+        <span class="value" id="accuracy"></span>
+      </div>
 
-        <div id="error" class="error"></div>
+      <a id="mapLink" class="map-link"
+         href="#" target="_blank" rel="noopener noreferrer">
+        🌍 OPEN IN GOOGLE MAPS
+      </a>
+    </section>
 
-        <div id="result" class="result hidden">
-            <img id="generatedImage" alt="Generated image">
+    <p class="footer">
+      🔒 Your browser asks for permission before sharing your location.
+      This page does not send your coordinates to a server.
+    </p>
+  </main>
 
-            <a
-                id="downloadBtn"
-                class="download"
-                download="AI-generated-image.png"
-            >
-                ↓ Download Image
-            </a>
-        </div>
+  <script>
+    const button = document.getElementById("findBtn");
+    const statusText = document.getElementById("status");
+    const result = document.getElementById("result");
 
-    </main>
+    function findLocation() {
+      result.style.display = "none";
 
-    <script src="script.js"></script>
+      if (!navigator.geolocation) {
+        statusText.textContent =
+          "Sorry! Your browser does not support location services.";
+        return;
+      }
 
+      if (!window.isSecureContext) {
+        statusText.textContent =
+          "Please open this page using HTTPS or localhost.";
+        return;
+      }
+
+      button.disabled = true;
+      button.textContent = "SEARCHING FOR LOCATION...";
+      statusText.innerHTML =
+        '<div class="loader"></div>Getting your location...';
+
+      navigator.geolocation.getCurrentPosition(
+        function(position) {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          const accuracy = position.coords.accuracy;
+
+          document.getElementById("latitude").textContent =
+            lat.toFixed(6);
+
+          document.getElementById("longitude").textContent =
+            lon.toFixed(6);
+
+          document.getElementById("accuracy").textContent =
+            "Approximately " + Math.round(accuracy) + " metres";
+
+          document.getElementById("mapLink").href =
+            "https://www.google.com/maps?q=" + lat + "," + lon;
+
+          result.style.display = "block";
+          statusText.textContent = "Location retrieved successfully! 🎉";
+
+          button.disabled = false;
+          button.textContent = "📍 FIND MY LOCATION";
+        },
+
+        function(error) {
+          const messages = {
+            1: "Location permission denied. Allow it in your browser settings.",
+            2: "Your location is unavailable. Check your device's location settings.",
+            3: "Request timed out. Please try again."
+          };
+
+          statusText.textContent =
+            messages[error.code] || "Something went wrong. Please try again.";
+
+          button.disabled = false;
+          button.textContent = "📍 TRY AGAIN";
+        },
+
+        {
+          enableHighAccuracy: true,
+          timeout: 20000,
+          maximumAge: 0
+        }
+      );
+    }
+  </script>
 </body>
 </html>
